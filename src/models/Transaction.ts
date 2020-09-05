@@ -36,6 +36,8 @@ class Transaction {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  transaction: Promise<Category | undefined>;
 }
 
 export default Transaction;
