@@ -1,6 +1,5 @@
-// import AppError from '../errors/AppError';
-
 import { getRepository } from 'typeorm';
+import AppError from '../errors/AppError';
 
 import Transaction from '../models/Transaction';
 import Category from '../models/Category';
@@ -10,6 +9,7 @@ interface TransactionDTO {
   value: number;
   type: 'income' | 'outcome';
   category: string;
+  total: number;
 }
 
 class CreateTransactionService {
@@ -18,6 +18,7 @@ class CreateTransactionService {
     value,
     type,
     category: categoryName,
+    total,
   }: TransactionDTO): Promise<Transaction> {
     /**
      *  Regras de negocio:
@@ -26,6 +27,10 @@ class CreateTransactionService {
      *  [X] Se existir relacionar a transacao e armazenar a transacao no banco de dados
      *  [X] Retornar uma transacao
      */
+
+    if (type === 'outcome' && value > total) {
+      throw new AppError('You dont have enough money');
+    }
 
     const categoryRepository = getRepository(Category);
     const transactionRepository = getRepository(Transaction);
